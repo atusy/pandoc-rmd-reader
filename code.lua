@@ -34,7 +34,8 @@ G = P{ "Doc",
   Doc = Ct(V"Block"^0) / pandoc.Pandoc ;
   Block = blankline^0 * V"Para" ;
   Para = Ct(V"Inline"^1) ;
-  Inline = V"Code" + V"Str" ;
+  Inline = V"Escaped" + V"Code" + V"Str" ;
+  Escaped = P"\\" * C(P(1)) / pandoc.Str ;
   Code = (code + code_classic) / function(t)
     local ret = pandoc.Code(trim(t["code"]))
     ret.attr = {
@@ -45,7 +46,7 @@ G = P{ "Doc",
     }
     return ret
   end;
-  Str = wordchar^1 / pandoc.Str ;
+  Str = P(1)^1 / pandoc.Str ;
 }
 
 function Reader(input, reader_options)
